@@ -29,15 +29,12 @@ public class Worker {
 	}
 	
 	public void run() {
-		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd:HHmmss SSS");
-		String nowStr = "";
 		String printStr = "";
 		
 		while(true){
 			if(var_watch >= 2000){
 				//reloadHandleStealCounter();
-				nowStr = format.format(new Date(System.currentTimeMillis()));
-				printStr = nowStr + "->before={" + handleSteal.getBefore() +
+				printStr = "before={" + handleSteal.getBefore() +
 						 "},failcount={" + handleSteal.getFailCount() +
 						 "},flowerSize={" + handleSteal.getPersonalPackets().size() + "}";
 				logger.info(printStr);

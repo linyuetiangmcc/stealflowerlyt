@@ -24,8 +24,8 @@ public class HandleSteal {
 	
 	private long before = 1220; // 提前多少ms开始发包0-1200ms
 	private int failCount = 0;
-	private int beforeStep = 10; // 提前步长
-	private int afterStep = 40; // 调慢步长
+	private int beforeStep = 20; // 提前步长
+	private int afterStep = 15; // 调慢步长
 	private int resetValue = 800; // 初始化值
 	private int maxBefore = 1400; // 最大before值
 	private int maxFailcount = 4;
@@ -265,25 +265,23 @@ public class HandleSteal {
 	public void deleteConflict() {
 		System.out.println("flower before delete conflic:" + personalPackets.size());
 
-		if (personalPackets.size() >= 3) { // 3个以上进行去冲突检测
-			ArrayList<PersonalPacket> personalPacketsTemp = new ArrayList<PersonalPacket>();
-			for (PersonalPacket personalPacket : personalPackets) {
-				personalPacketsTemp.add(personalPacket);
+		for (int i = 1; i < personalPackets.size() - 1; ) {
+			long pre_one = personalPackets.get(i - 1).getEnDate().getTime();
+			long next_one = personalPackets.get(i + 1).getEnDate().getTime();
+			long middle = personalPackets.get(i).getEnDate().getTime();
+			if ((middle - pre_one) <= 2000 && (next_one - middle) > 2000) { //删除前者
+				System.out.println("remove conflic flower:" + personalPackets.get(i - 1).getEnDate());
+				personalPackets.remove(i - 1);
+				//i不变，由于删除一个元素，i是往后走一位
 			}
-
-			for (int i = 1; i < personalPacketsTemp.size() - 1; i++) {
-				long pre_one = personalPacketsTemp.get(i - 1).getEnDate().getTime();
-				long next_one = personalPacketsTemp.get(i + 1).getEnDate().getTime();
-				long middle = personalPacketsTemp.get(i).getEnDate().getTime();
-
-				if ((middle - pre_one) <= 3000 && (next_one - middle) <= 3000) {
-					personalPackets.remove(personalPacketsTemp.get(i));
-					System.out.println("remove conflic flower:" + personalPacketsTemp.get(i).getEnDate());
-					i = i + 2;
-					continue;
-				}
+			else
+			if ((middle - pre_one) <= 2000 && (next_one - middle) <= 2000) { //删除中间
+				System.out.println("remove conflic flower:" + personalPackets.get(i).getEnDate());
+				personalPackets.remove(i);
 			}
-
+			else { //不删除
+				i++;
+			}
 		}
 
 		System.out.println("flower after delete conflic:" + personalPackets.size());
